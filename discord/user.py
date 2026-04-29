@@ -27,6 +27,8 @@ from __future__ import annotations
 import datetime
 from typing import Any, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 
+from rich.syntax import code
+
 import discord.abc
 from .asset import Asset, AssetMixin
 from .collectible import Collectible
@@ -1031,6 +1033,55 @@ class ClientUser(BaseUser):
                 pass
 
         return self.__class__(state=self._state, data=data)  # type: ignore # ???
+
+    async def add_totp(self, code: str, secret: str, /) -> dict:
+        """|coro|
+
+        Adds a TOTP device to the account.
+
+        This is required to enable 2FA on an account. If your account already has 2FA enabled then this does nothing.
+
+        .. versionadded:: 2.0
+
+        Raises
+        -------
+        HTTPException
+            Adding the TOTP device failed.
+        """
+        args = {
+            'code': code,
+            'secret': secret,
+        }
+        http = self._state.http
+        response = await http.add_totp(args)
+        return response
+    
+    async def finish_totp(self, ticket: str, mfa_type: str, data: str, code: str, secret: str, /) -> None:
+        """|coro|
+
+        Finishes adding a TOTP device to the account.
+
+        This is required to enable 2FA on an account after calling :meth:`add_totp`. If your account already has 2FA enabled then this does nothing.
+
+        .. versionadded:: 2.0
+
+        Raises
+        -------
+        HTTPException
+            Finishing the TOTP device failed.
+        """
+        args = {
+            'ticket': ticket,
+            'mfa_type': mfa_type,
+            'data': data,
+        }
+        http = self._state.http
+        await http.finish_totp(args)
+        response = await self.add_totp(code, secret)
+        try:
+            http._token(response['token'])
+        except KeyError:
+            pass
 
 
 class User(BaseUser, discord.abc.Connectable, discord.abc.Messageable):

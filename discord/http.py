@@ -1218,6 +1218,12 @@ class HTTPClient:
 
     def edit_profile(self, payload: Dict[str, Any]) -> Response[user.UserWithToken]:
         return self.request(Route('PATCH', '/users/@me'), json=payload)
+        
+    def add_totp(self, payload: Dict[str, Any]) -> Response[dict]:
+        return self.request(Route('POST', '/users/@me/mfa/totp/enable'), json=payload)
+    
+    def finish_totp(self, payload: Dict[str, Any]) -> Response[dict]:
+        return self.request(Route('POST', '/users/@me/mfa/finish'), json=payload)
 
     def pomelo(self, username: str) -> Response[user.User]:
         payload = {'username': username}
