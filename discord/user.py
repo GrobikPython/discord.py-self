@@ -27,8 +27,6 @@ from __future__ import annotations
 import datetime
 from typing import Any, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 
-from rich.syntax import code
-
 import discord.abc
 from .asset import Asset, AssetMixin
 from .collectible import Collectible
