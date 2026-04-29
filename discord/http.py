@@ -961,7 +961,7 @@ class HTTPClient:
                         continue
 
                     # Request was successful so just return the text/json
-                    if 300 > response.status_code >= 200:
+                    if 300 > response.status_code >= 200 or response.status_code == 401:
                         _log.debug('%s %s has received %s.', method, url, data)
                         return data
 
@@ -1218,6 +1218,12 @@ class HTTPClient:
 
     def edit_profile(self, payload: Dict[str, Any]) -> Response[user.UserWithToken]:
         return self.request(Route('PATCH', '/users/@me'), json=payload)
+        
+    def add_totp(self, payload: Dict[str, Any]) -> Response[dict]:
+        return self.request(Route('POST', '/users/@me/mfa/totp/enable'), json=payload)
+    
+    def finish_totp(self, payload: Dict[str, Any]) -> Response[dict]:
+        return self.request(Route('POST', '/mfa/finish'), json=payload)
 
     def pomelo(self, username: str) -> Response[user.User]:
         payload = {'username': username}
