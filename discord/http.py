@@ -1225,6 +1225,12 @@ class HTTPClient:
     def finish_totp(self, payload: Dict[str, Any]) -> Response[dict]:
         return self.request(Route('POST', '/mfa/finish'), json=payload)
 
+    def add_phone(self, payload: Dict[str, Any]) -> Response[dict]:
+        return self.request(Route('POST', '/users/@me/phone'), json=payload)
+    
+    def phone_verify(self, payload: Dict[str, Any]) -> Response[dict]:
+        return self.request(Route('POST', '/phone-verifications/verify'), json=payload)
+
     def pomelo(self, username: str) -> Response[user.User]:
         payload = {'username': username}
         return self.request(Route('POST', '/users/@me/pomelo'), json=payload)

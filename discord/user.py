@@ -1080,6 +1080,23 @@ class ClientUser(BaseUser):
             http._token(response['token'])
         except KeyError:
             pass
+    
+    async def add_phone(self, phone=None, token=None, password=None):
+        if token is not None and password is not None:
+            data = {"phone_token": token,"password": password, "change_phone_reason": "user_settings_update"}
+        else:
+            data = {"phone": phone,"change_phone_reason":"user_settings_update"}
+        http = self._state.http
+        response = await http.add_phone(data)
+        return response
+    
+    async def phone_verify(self, phone, code, password):
+        data = {"phone": phone, "code": code}
+        http = self._state.http
+        response = await http.phone_verify(data)
+        token = response['token']
+        response = await self.add_phone(token=token, password=password)
+        return response
 
 
 class User(BaseUser, discord.abc.Connectable, discord.abc.Messageable):
