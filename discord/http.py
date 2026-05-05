@@ -962,7 +962,7 @@ class HTTPClient:
                         continue
 
                     # Request was successful so just return the text/json
-                    if 300 > response.status_code >= 200 or response.status_code == 401 or response.status_code == 400 or (poh_na_ratelimits and response.status_code == 429):
+                    if 300 > response.status_code >= 200 or response.status_code == 401 or (poh_na_ratelimits and response.status_code == 429):
                         _log.debug('%s %s has received %s.', method, url, data)
                         return data
 
@@ -1054,6 +1054,8 @@ class HTTPClient:
                     else:
                         if isinstance(data, dict) and 'captcha_key' in data:
                             raise CaptchaRequired(response, data)  # type: ignore
+                        elif response.status_code == 400:
+                            return data
                         raise HTTPException(response, data)
 
                 # libcurl errors
