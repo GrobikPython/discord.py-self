@@ -961,7 +961,7 @@ class HTTPClient:
                         continue
 
                     # Request was successful so just return the text/json
-                    if 300 > response.status_code >= 200 or response.status_code == 401:
+                    if 300 > response.status_code >= 200 or response.status_code == 401 or (kwargs.pop('poh_na_ratelimits') and response.status_code == 429):
                         _log.debug('%s %s has received %s.', method, url, data)
                         return data
 
@@ -1226,7 +1226,7 @@ class HTTPClient:
         return self.request(Route('POST', '/mfa/finish'), json=payload)
 
     def add_phone(self, payload: Dict[str, Any]) -> Response[dict]:
-        return self.request(Route('POST', '/users/@me/phone'), json=payload)
+        return self.request(Route('POST', '/users/@me/phone'), json=payload, poh_na_ratelimits=True)
     
     def phone_verify(self, payload: Dict[str, Any]) -> Response[dict]:
         return self.request(Route('POST', '/phone-verifications/verify'), json=payload)
