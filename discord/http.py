@@ -936,7 +936,7 @@ class HTTPClient:
                                 self._bucket_hashes[route_key] = discord_hash
                                 self._buckets[f'{discord_hash}:{route.major_parameters}'] = ratelimit
 
-                    if has_ratelimit_headers:
+                    if has_ratelimit_headers and not kwargs.pop('poh_na_ratelimits', False):
                         if response.status_code != 429:
                             ratelimit.update(response, use_clock=self.use_clock)
                             if ratelimit.remaining == 0:
