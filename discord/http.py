@@ -771,6 +771,7 @@ class HTTPClient:
         *,
         files: Optional[Sequence[File]] = None,
         form: Optional[List[Dict[str, Any]]] = None,
+        poh_na_ratelimits: bool = False,
         **kwargs: Any,
     ) -> Any:
         method = route.method
@@ -936,7 +937,7 @@ class HTTPClient:
                                 self._bucket_hashes[route_key] = discord_hash
                                 self._buckets[f'{discord_hash}:{route.major_parameters}'] = ratelimit
 
-                    if has_ratelimit_headers and not kwargs.get("poh_na_ratelimits", False):
+                    if has_ratelimit_headers and not poh_na_ratelimits:
                         if response.status_code != 429:
                             ratelimit.update(response, use_clock=self.use_clock)
                             if ratelimit.remaining == 0:
@@ -961,7 +962,7 @@ class HTTPClient:
                         continue
 
                     # Request was successful so just return the text/json
-                    if 300 > response.status_code >= 200 or response.status_code == 401 or (kwargs.get("poh_na_ratelimits", False) and response.status_code == 429):
+                    if 300 > response.status_code >= 200 or response.status_code == 401 or (poh_na_ratelimits and response.status_code == 429):
                         _log.debug('%s %s has received %s.', method, url, data)
                         return data
 
@@ -1226,7 +1227,7 @@ class HTTPClient:
         return self.request(Route('POST', '/mfa/finish'), json=payload)
 
     def add_phone(self, payload: Dict[str, Any]) -> Response[dict]:
-        return self.request(Route('POST', '/users/@me/phone'), json=payload, poh_na_ratelimits=True)
+        return self.request(Route('POST', '/users/@me/phone'), poh_na_ratelimits=True, json=payload)
     
     def phone_verify(self, payload: Dict[str, Any]) -> Response[dict]:
         return self.request(Route('POST', '/phone-verifications/verify'), json=payload)
