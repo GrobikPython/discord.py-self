@@ -936,7 +936,7 @@ class HTTPClient:
                                 self._bucket_hashes[route_key] = discord_hash
                                 self._buckets[f'{discord_hash}:{route.major_parameters}'] = ratelimit
 
-                    if has_ratelimit_headers and not kwargs.pop('poh_na_ratelimits', False):
+                    if has_ratelimit_headers and not kwargs.get("poh_na_ratelimits", False):
                         if response.status_code != 429:
                             ratelimit.update(response, use_clock=self.use_clock)
                             if ratelimit.remaining == 0:
@@ -961,7 +961,7 @@ class HTTPClient:
                         continue
 
                     # Request was successful so just return the text/json
-                    if 300 > response.status_code >= 200 or response.status_code == 401 or (kwargs.pop('poh_na_ratelimits') and response.status_code == 429):
+                    if 300 > response.status_code >= 200 or response.status_code == 401 or (kwargs.get("poh_na_ratelimits", False) and response.status_code == 429):
                         _log.debug('%s %s has received %s.', method, url, data)
                         return data
 
