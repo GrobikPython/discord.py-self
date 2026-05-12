@@ -1241,7 +1241,8 @@ class Client:
         :class:`dict`
             The fingerprint data.
         """
-        return await self.http.get_fingerprint()
+        response = await self.http.get_fingerprint()
+        return response
 
     # async def register_user(self, email: str, password: str, username: Optional[str] = None) -> ClientUser:
     #     pass
