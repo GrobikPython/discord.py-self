@@ -1101,8 +1101,23 @@ class HTTPClient:
     # All the below could be rewritten to use curl_cffi, but I'm not sure
     # about the performance and we aren't concerned about fingerprinting here
 
-    def get_fingerprint(self) -> Response[channel.DMChannel]:
+    def get_fingerprint(self) -> Response[dict]:
         return self.request(Route('GET', '/experiments'))
+
+    def register_user(self, email: str, password: str, username: Optional[str], fingerprint: Optional[str], date_of_birth: str, global_name: Optional[str] = "", invite: Optional[bool] = None, consent: bool = True, gift_code_sku_id: Optional[str] = None, promotional_email_opt_in: bool = False) -> Response[dict]:
+        payload = {
+            'fingerprint': fingerprint,
+            'email': email,
+            'username': username,
+            "global_name": global_name,
+            'password': password,
+            "invite": invite,
+            "consent": consent,
+            "date_of_birth": date_of_birth,
+            "gift_code_sku_id": gift_code_sku_id,
+            "promotional_email_opt_in": promotional_email_opt_in
+        }
+        return self.request(Route('POST', '/auth/register'), json=payload)
 
     async def get_from_cdn(self, url: str) -> bytes:
         kwargs = {}

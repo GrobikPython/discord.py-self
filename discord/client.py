@@ -1244,8 +1244,11 @@ class Client:
         response = await self.http.get_fingerprint()
         return response
 
-    # async def register_user(self, email: str, password: str, username: Optional[str] = None) -> ClientUser:
-    #     pass
+    async def register_user(self, email: str, password: str, username: Optional[str], date_of_birth: str, global_name: Optional[str] = "", invite: Optional[bool] = None, consent: bool = True, gift_code_sku_id: Optional[str] = None, promotional_email_opt_in: bool = False, reconnect: bool = True) -> None:
+        fingerprint = await self.get_fingerprint()
+        data = await self.http.register_user(email, password, username, fingerprint['fingerprint'], date_of_birth, global_name, invite, consent, gift_code_sku_id, promotional_email_opt_in)
+        await self.login(data['token'])
+        await self.connect(reconnect=reconnect)
 
     async def start(self, token: str, *, reconnect: bool = True) -> None:
         """|coro|
