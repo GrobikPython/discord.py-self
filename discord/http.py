@@ -1101,7 +1101,7 @@ class HTTPClient:
     # All the below could be rewritten to use curl_cffi, but I'm not sure
     # about the performance and we aren't concerned about fingerprinting here
 
-    async def get_fingerprint(self) -> Response[channel.DMChannel]:
+    def get_fingerprint(self) -> Response[channel.DMChannel]:
         return self.request(Route('GET', '/experiments'))
 
     async def get_from_cdn(self, url: str) -> bytes:
