@@ -1227,6 +1227,25 @@ class Client:
         self._connection.clear(full=True)
         self.http.clear()
 
+    async def get_fingerprint(self):
+        """|coro|
+
+        Gets the fingerprint for the current client.
+
+        This is used for certain endpoints that require a fingerprint, such as the login endpoint.
+
+        .. versionadded:: 2.1
+
+        Returns
+        --------
+        :class:`dict`
+            The fingerprint data.
+        """
+        return await self.http.get_fingerprint()
+
+    # async def register_user(self, email: str, password: str, username: Optional[str] = None) -> ClientUser:
+    #     pass
+
     async def start(self, token: str, *, reconnect: bool = True) -> None:
         """|coro|
 
